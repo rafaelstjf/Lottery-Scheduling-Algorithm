@@ -20,20 +20,20 @@ const char lottName[] = "LOTT";
 unsigned int randInterval(unsigned int min, unsigned int max)
 {
 	//creditos: theJPster (https://stackoverflow.com/questions/2509679/how-to-generate-a-random-integer-number-from-within-a-range)
-    int r;
-    const unsigned int range = 1 + max - min;
-    const unsigned int buckets = RAND_MAX / range;
-    const unsigned int limit = buckets * range;
+	int r;
+	const unsigned int range = 1 + max - min;
+	const unsigned int buckets = RAND_MAX / range;
+	const unsigned int limit = buckets * range;
 
-    /* Create equal size buckets all in a row, then fire randomly towards
+	/* Create equal size buckets all in a row, then fire randomly towards
      * the buckets until you land in one of them. All buckets are equally
      * likely. If you land off the end of the line of buckets, try again. */
-    do
-    {
-        r = rand();
-    } while (r >= limit);
+	do
+	{
+		r = rand();
+	} while (r >= limit);
 
-    return min + (r / buckets);
+	return min + (r / buckets);
 }
 //=====Funcoes da API=====
 
@@ -57,7 +57,7 @@ void lottInitSchedParams(Process *p, void *params)
 Process *lottSchedule(Process *plist)
 {
 	//...
-	int num_max_tickets = 0;
+	int num_max_tickets = 0, drawn_ticket = 0, partial_sum = 0;
 	Process *it = plist;
 	//realiza a soma de todos os processos com estado diferente de bloqueado e terminando
 	while (it != NULL)
@@ -65,22 +65,26 @@ Process *lottSchedule(Process *plist)
 		if (processGetStatus(it) != PROC_WAITING && processGetStatus(it) != PROC_TERMINATING)
 		{
 			LotterySchedParams *param = processGetSchedParams(it);
-			num_max_tickets+= param->num_tickets;
+			num_max_tickets += param->num_tickets;
 		}
 		it = processGetNext(it);
 	}
+	//volta a lista para o inicio, sorteia 1 ticket e realiza a soma parcial
 	it = plist;
-	int drawn_ticket = randInterval(0, num_max_tickets);
+	drawn_ticket = randInterval((num_max_tickets - (num_max_tickets - 1)), num_max_tickets);
 	while (it != NULL)
 	{
 		if (processGetStatus(it) != PROC_WAITING && processGetStatus(it) != PROC_TERMINATING)
 		{
 			LotterySchedParams *param = processGetSchedParams(it);
-			num_max_tickets+= param->num_tickets;
+			partial_sum += param->num_tickets;
+			if (partial_sum >= drawn_ticket)
+				break;
 		}
 		it = processGetNext(it);
 	}
-	return NULL;
+	//retorna it, sendo ele o ticket sorteado ou NULL
+	return it;
 }
 
 //Libera os parametros de escalonamento de um processo p, chamada
