@@ -17,6 +17,7 @@
 const char lottName[] = "LOTT";
 
 //=====Funcoes Auxiliares=====
+int lott_slot = 0;
 unsigned int randInterval(unsigned int min, unsigned int max)
 {
 	//creditos: theJPster (https://stackoverflow.com/questions/2509679/how-to-generate-a-random-integer-number-from-within-a-range)
@@ -44,6 +45,18 @@ unsigned int randInterval(unsigned int min, unsigned int max)
 void lottInitSchedInfo()
 {
 	//...
+	
+	SchedInfo* si;
+	si = malloc(sizeof (SchedInfo));
+	si->name[0] = lottName[0];
+	si->name[1] = lottName[1];
+	si->name[2] = lottName[2];
+	si->name[3] = lottName[3];
+	si->name[4] = '\0';
+	si->releaseParamsFn = (lottReleaseParams);
+	si->initParamsFn = (lottInitSchedParams);
+	si->scheduleFn = (lottSchedule);
+	lott_slot = schedRegisterScheduler(si);
 }
 
 //Inicializa os parametros de escalonamento de um processo p, chamada
@@ -51,6 +64,9 @@ void lottInitSchedInfo()
 void lottInitSchedParams(Process *p, void *params)
 {
 	//...
+	processSetSchedParams(p, params);
+	schedSetScheduler(p, params, lott_slot);
+	
 }
 
 //Retorna o proximo processo a obter a CPU, conforme o algortimo Lottery
@@ -85,6 +101,7 @@ Process *lottSchedule(Process *plist)
 	}
 	//retorna it, sendo ele o ticket sorteado ou NULL
 	return it;
+
 }
 
 //Libera os parametros de escalonamento de um processo p, chamada
@@ -93,7 +110,8 @@ Process *lottSchedule(Process *plist)
 int lottReleaseParams(Process *p)
 {
 	//...
-	return 0;
+	free(processGetSchedParams(p));
+	return processGetSchedSlot(p);
 }
 
 //Transfere certo numero de tickets do processo src para o processo dst.

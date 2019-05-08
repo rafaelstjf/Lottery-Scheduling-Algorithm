@@ -33,5 +33,5 @@ logs/*.txt
 bin/
 obj/
 Models/
-build/
-debug/
+build/*
+debug/*

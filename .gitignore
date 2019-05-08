@@ -53,4 +53,5 @@ dkms.conf
 
 # Other folders
 /build/*
+/debug/*
 /.vscode/*
