@@ -45,9 +45,9 @@ unsigned int randInterval(unsigned int min, unsigned int max)
 void lottInitSchedInfo()
 {
 	//...
-	
-	SchedInfo* si;
-	si = malloc(sizeof (SchedInfo));
+
+	SchedInfo *si;
+	si = malloc(sizeof(SchedInfo));
 	si->name[0] = lottName[0];
 	si->name[1] = lottName[1];
 	si->name[2] = lottName[2];
@@ -66,7 +66,6 @@ void lottInitSchedParams(Process *p, void *params)
 	//...
 	processSetSchedParams(p, params);
 	schedSetScheduler(p, params, lott_slot);
-	
 }
 
 //Retorna o proximo processo a obter a CPU, conforme o algortimo Lottery
@@ -101,7 +100,6 @@ Process *lottSchedule(Process *plist)
 	}
 	//retorna it, sendo ele o ticket sorteado ou NULL
 	return it;
-
 }
 
 //Libera os parametros de escalonamento de um processo p, chamada
@@ -118,6 +116,22 @@ int lottReleaseParams(Process *p)
 //Retorna o numero de tickets efetivamente transfeirdos (pode ser menos)
 int lottTransferTickets(Process *src, Process *dst, int tickets)
 {
-	//...
+	if (src != NULL && dst != NULL)
+	{
+		LotterySchedParams *param = processGetSchedParams(src);
+		LotterySchedParams *param2 = processGetSchedParams(dst);
+		if (tickets >= param->num_tickets)
+		{
+			param2->num_tickets = param2->num_tickets + (param->num_tickets - 1);
+			param->num_tickets = 1;
+			return param->num_tickets - 1;
+		}
+		else
+		{
+			param2->num_tickets = param2->num_tickets + (tickets);
+			param->num_tickets = param->num_tickets - tickets;
+			return tickets;
+		}
+	}
 	return 0;
 }
