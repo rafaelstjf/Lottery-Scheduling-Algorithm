@@ -18,24 +18,6 @@ const char lottName[] = "LOTT";
 
 //=====Funcoes Auxiliares=====
 int lott_slot = 0;
-unsigned int randInterval(unsigned int min, unsigned int max)
-{
-	//creditos: theJPster (https://stackoverflow.com/questions/2509679/how-to-generate-a-random-integer-number-from-within-a-range)
-	int r;
-	const unsigned int range = 1 + max - min;
-	const unsigned int buckets = RAND_MAX / range;
-	const unsigned int limit = buckets * range;
-
-	/* Create equal size buckets all in a row, then fire randomly towards
-     * the buckets until you land in one of them. All buckets are equally
-     * likely. If you land off the end of the line of buckets, try again. */
-	do
-	{
-		r = rand();
-	} while (r >= limit);
-
-	return min + (r / buckets);
-}
 //=====Funcoes da API=====
 
 //Funcao chamada pela inicializacao do S.O. para a incializacao do escalonador
@@ -88,7 +70,7 @@ Process *lottSchedule(Process *plist)
 	//volta a lista para o inicio, sorteia 1 ticket e realiza a soma parcial
 	it = plist;
 	if (num_max_tickets > 0)
-		drawn_ticket = randInterval((num_max_tickets - (num_max_tickets - 1)), num_max_tickets);
+		drawn_ticket = (rand() % (num_max_tickets - 2)) + 1; //[1,num_max_tickets]
 	else
 		drawn_ticket = 0;
 	while (it != NULL && flag == 0)
