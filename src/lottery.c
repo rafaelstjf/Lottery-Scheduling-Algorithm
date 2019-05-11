@@ -1,7 +1,7 @@
 /*
 *  lottery.c - Implementacao do algoritmo Lottery Scheduling e sua API
 *
-*  Autores: SUPER_PROGRAMADORES_C
+*  Autores: Rafael de Souza Terra; Rodrigo Coelho Villa Verde; Natalie Ferraz Silva Bravo
 *  Projeto: Trabalho Pratico I - Sistemas Operacionais
 *  Organizacao: Universidade Federal de Juiz de Fora
 *  Departamento: Dep. Ciencia da Computacao
