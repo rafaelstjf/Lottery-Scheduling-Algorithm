@@ -74,6 +74,7 @@ Process *lottSchedule(Process *plist)
 	//...
 	int num_max_tickets = 0, drawn_ticket = 0, partial_sum = 0;
 	Process *it = plist;
+	int flag = 0;
 	//realiza a soma de todos os processos com estado diferente de bloqueado e terminando
 	while (it != NULL)
 	{
@@ -86,17 +87,21 @@ Process *lottSchedule(Process *plist)
 	}
 	//volta a lista para o inicio, sorteia 1 ticket e realiza a soma parcial
 	it = plist;
-	drawn_ticket = randInterval((num_max_tickets - (num_max_tickets - 1)), num_max_tickets);
-	while (it != NULL)
+	if (num_max_tickets > 0)
+		drawn_ticket = randInterval((num_max_tickets - (num_max_tickets - 1)), num_max_tickets);
+	else
+		drawn_ticket = 0;
+	while (it != NULL && flag == 0)
 	{
 		if (processGetStatus(it) != PROC_WAITING && processGetStatus(it) != PROC_TERMINATING)
 		{
 			LotterySchedParams *param = processGetSchedParams(it);
 			partial_sum += param->num_tickets;
 			if (partial_sum >= drawn_ticket)
-				break;
+				flag = 1;
 		}
-		it = processGetNext(it);
+		if (flag == 0)
+			it = processGetNext(it);
 	}
 	//retorna it, sendo ele o ticket sorteado ou NULL
 	return it;
