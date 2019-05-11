@@ -70,7 +70,7 @@ Process *lottSchedule(Process *plist)
 	//volta a lista para o inicio, sorteia 1 ticket e realiza a soma parcial
 	it = plist;
 	if (num_max_tickets > 0)
-		drawn_ticket = (rand() % (num_max_tickets - 2)) + 1; //[1,num_max_tickets]
+		drawn_ticket = ((rand() % num_max_tickets) +1); //[1,num_max_tickets]
 	else
 		drawn_ticket = 0;
 	while (it != NULL && flag == 0)
